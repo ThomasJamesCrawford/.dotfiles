@@ -1,11 +1,20 @@
 { config, pkgs, ... }:
 
 let
-  user = "thomas";
+  username =
+    if pkgs.system == "x86_64-darwin"
+    then "thomascrawford"
+    else "thomas";
+
+  homeDirectory =
+    if pkgs.system == "x86_64-darwin"
+    then "/Users/${username}"
+    else "/home/${username}";
+
 in
 {
-  home.username = user;
-  home.homeDirectory = "/home/${user}";
+  home.username = username;
+  home.homeDirectory = homeDirectory;
 
   home.packages = with pkgs; [
     htop
@@ -15,15 +24,15 @@ in
     stow
   ];
 
-  home.file."/home/${user}/.config/nvim/settings.lua".source = ./init.lua;
+  home.file.".config/nvim/settings.lua".source = ./init.lua;
 
   # Need to set this outside home-manager
   # sudo chsh -s $(which zsh) $(whoami)
-  home.file."/home/${user}/.bashrc".text = ''
+  home.file.".bashrc ".text = ''
     export SHELL=${pkgs.zsh}/bin/zsh
   '';
 
-  home.file."/home/${user}/.config/alacritty/alacritty.yml".source = ./alacritty.yml;
+  home.file.".config/alacritty/alacritty.yml".source = ./alacritty.yml;
 
   home.stateVersion = "22.11";
 
@@ -95,6 +104,9 @@ in
 
     initExtra = ''
       export EDITOR=nvim
+
+      # This fixes gpg signing
+      export GPG_TTY=$TTY
     '';
 
     shellAliases = {
@@ -128,12 +140,15 @@ in
     };
   };
 
-  programs.git = {
-    enable = true;
-
-    userName = "Thomas Crawford";
-    userEmail = "ThomasJamesCrawford96@gmail.com";
-  };
+  # programs.git = {
+  #   enable = true;
+  #
+  #   userName = "Thomas Crawford";
+  #   userEmail = "ThomasJamesCrawford96@gmail.com";
+  # };
 
   programs.home-manager.enable = true;
 }
+
+
+

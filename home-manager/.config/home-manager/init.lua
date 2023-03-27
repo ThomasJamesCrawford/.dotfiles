@@ -41,6 +41,8 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 -- Paste over the top without replacing what we copied
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
+vim.cmd [[colorscheme gruvbox-material]]
+
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>sf", builtin.find_files, {});
 vim.keymap.set("n", "<C-p>", builtin.git_files, {});
@@ -69,13 +71,11 @@ null_ls.setup({
   }
 })
 
-require('fidget').setup {}
-
-vim.cmd [[colorscheme gruvbox-material]]
-
--- Transparent BG --
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+require('fidget').setup {
+  window ={
+    blend = 0,
+  }
+}
 
 -- Setup language servers.
 local lspconfig = require("lspconfig")
@@ -182,5 +182,20 @@ cmp.setup {
   sources = {
     { name = "nvim_lsp" },
     { name = "luasnip" },
+
   },
 }
+
+-- Transparent BG --
+vim.cmd('highlight Normal guibg=none ctermbg=none')
+vim.cmd('highlight NormalNC guibg=none ctermbg=none') -- This makes fidget transparent
+vim.cmd('highlight NormalFloat guibg=none ctermbg=none')
+vim.cmd('highlight CursorLineNr guibg=none ctermbg=none')
+vim.cmd('highlight CursorLine guibg=none ctermbg=none')
+vim.cmd('highlight LineNr guibg=none ctermbg=none')
+vim.cmd('highlight Folded guibg=none ctermbg=none')
+vim.cmd('highlight NonText guibg=none ctermbg=none')
+vim.cmd('highlight SpecialKey guibg=none ctermbg=none')
+vim.cmd('highlight VertSplit guibg=none ctermbg=none')
+vim.cmd('highlight SignColumn guibg=none ctermbg=none')
+vim.cmd('highlight EndOfBuffer guibg=none ctermbg=none')
