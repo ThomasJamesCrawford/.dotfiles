@@ -46,6 +46,8 @@ vim.cmd [[colorscheme gruvbox-material]]
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>sf", builtin.find_files, {});
 vim.keymap.set("n", "<C-p>", builtin.git_files, {});
+vim.keymap.set('n', '<leader>sg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>sh', builtin.help_tags, {})
 
 require("nvim-treesitter.configs").setup {
   highlight = {
@@ -189,14 +191,38 @@ cmp.setup {
   sources = {
     { name = "nvim_lsp" },
     { name = "luasnip" },
-
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
   },
 }
+
+local border = {
+  { "╭", "FloatBorder" },
+  { "─",  "FloatBorder" },
+  { "╮", "FloatBorder" },
+  { "│",  "FloatBorder" },
+  { "╯", "FloatBorder" },
+  { "─",  "FloatBorder" },
+  { "╰", "FloatBorder" },
+  { "│",  "FloatBorder" },
+}
+
+vim.cmd('highlight FloatBorder guifg=white guibg=#282828')
+vim.cmd('highlight NormalFloat guibg=#282828')
+
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or border
+  return orig_util_open_floating_preview(contents, syntax, opts, ...)
+end
 
 -- Transparent BG --
 vim.cmd('highlight Normal guibg=none ctermbg=none')
 vim.cmd('highlight NormalNC guibg=none ctermbg=none') -- This makes fidget transparent
-vim.cmd('highlight NormalFloat guibg=none ctermbg=none')
+-- vim.cmd('highlight NormalFloat guibg=none ctermbg=none')
 vim.cmd('highlight CursorLineNr guibg=none ctermbg=none')
 vim.cmd('highlight CursorLine guibg=none ctermbg=none')
 vim.cmd('highlight LineNr guibg=none ctermbg=none')
