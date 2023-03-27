@@ -187,6 +187,7 @@ in
 
       hme = "home-manager edit";
       hms = "home-manager switch && exec zsh";
+      gdf = "cd ~/.dotfiles";
 
       vimrc = "nvim ~/.config/home-manager/init.lua";
     };
@@ -238,9 +239,11 @@ in
       bind k select-pane -U
       bind l select-pane -R
 
-      # Copy mode using 'Esc'
-      unbind [
-      bind Escape copy-mode
+      bind-key v split-window -h
+      bind-key s split-window -v
+
+      bind Enter copy-mode
+
       # Start selection with 'v' and copy using 'y'
       bind-key -T copy-mode-vi v send-keys -X begin-selection
     '';
