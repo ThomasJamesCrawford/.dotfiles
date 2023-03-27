@@ -72,7 +72,7 @@ null_ls.setup({
 })
 
 require('fidget').setup {
-  window ={
+  window = {
     blend = 0,
   }
 }
@@ -84,7 +84,14 @@ lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup {}
 lspconfig.rnix.setup {}
 lspconfig.golangci_lint_ls.setup {}
-lspconfig.yamlls.setup {}
+lspconfig.yamlls.setup {
+  settings = {
+    yaml = {
+      keyOrdering = false,
+    },
+    redhat = { telemetry = { enabled = false } }
+  },
+}
 lspconfig.bashls.setup {}
 
 lspconfig.lua_ls.setup {
