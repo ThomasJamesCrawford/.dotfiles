@@ -213,6 +213,7 @@ vim.cmd('highlight FloatBorder guifg=white guibg=#282828')
 vim.cmd('highlight NormalFloat guibg=#282828')
 
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
   opts = opts or {}
   opts.border = opts.border or border
