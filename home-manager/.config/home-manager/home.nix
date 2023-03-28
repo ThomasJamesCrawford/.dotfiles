@@ -37,7 +37,7 @@ in
 
   # Need to set this outside home-manager
   # sudo chsh -s $(which zsh) $(whoami)
-  home.file.".bashrc ".text = ''
+  home.file.".bashrc".text = ''
     export SHELL=${pkgs.zsh}/bin/zsh
   '';
 
@@ -175,6 +175,8 @@ in
       export TERM=xterm-256color
 
       export LC_ALL="en_US.UTF-8"
+
+      export SHELL=${pkgs.zsh}/bin/zsh
     '';
 
     shellAliases = {
