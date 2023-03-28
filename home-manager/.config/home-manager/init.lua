@@ -68,8 +68,11 @@ require('lualine').setup {
 local null_ls = require("null-ls")
 null_ls.setup({
   sources = {
-    null_ls.builtins.formatting.prettier_d_slim,
+    null_ls.builtins.formatting.prettier_d_slim.with({
+      disabled_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" } -- eslint_d does these
+    }),
     null_ls.builtins.formatting.eslint_d,
+    null_ls.builtins.diagnostics.eslint_d,
     null_ls.builtins.formatting.shfmt,
   }
 })
@@ -85,7 +88,7 @@ local lspconfig = require("lspconfig")
 
 lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup {}
-lspconfig.eslint.setup {}
+-- lspconfig.eslint.setup {}
 lspconfig.rnix.setup {}
 lspconfig.golangci_lint_ls.setup {}
 lspconfig.yamlls.setup {
@@ -147,7 +150,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, opts)
     vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
     vim.keymap.set("n", "<space>f", function()
-      vim.lsp.buf.format { async = true }
+      vim.lsp.buf.format { async = true, filter = function(client) return client.name ~= "tsserver" end }
     end, opts)
   end,
 })
@@ -212,13 +215,13 @@ require('gitsigns').setup {
 
 local border = {
   { "╭", "FloatBorder" },
-  { "─",  "FloatBorder" },
+  { "─", "FloatBorder" },
   { "╮", "FloatBorder" },
-  { "│",  "FloatBorder" },
+  { "│", "FloatBorder" },
   { "╯", "FloatBorder" },
-  { "─",  "FloatBorder" },
+  { "─", "FloatBorder" },
   { "╰", "FloatBorder" },
-  { "│",  "FloatBorder" },
+  { "│", "FloatBorder" },
 }
 
 vim.cmd('highlight FloatBorder guifg=white guibg=#282828')

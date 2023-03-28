@@ -73,25 +73,17 @@ in
 
     font:
       normal:
-        family: Hack
+        family: ${if mac then "MesloLGS NF" else "Hack"}
         style: Regular
-        
-      bold:
-        family: Hack
-        style: Bold
 
-      italic:
-        family: Hack
-        style: Italic
-
-      size: 13
+      size: ${if mac then "16" else "13"}
 
     shell:
       program: .nix-profile/bin/zsh
       args:
         - -l
         - -c
-        - ".nix-profile/bin/tmux attach || .nix-profile/bin/tmux"
+        - .nix-profile/bin/tmux
 
     window:
       ${if !mac then "decorations: none" else ""}
@@ -179,6 +171,10 @@ in
       export GPG_TTY=$TTY
 
       source ~/.secrets/secrets.sh
+
+      export TERM=xterm-256color
+
+      export LC_ALL="en_US.UTF-8"
     '';
 
     shellAliases = {
