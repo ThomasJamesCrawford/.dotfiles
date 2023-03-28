@@ -27,6 +27,7 @@ in
     htop
     jq
     fd
+    gh
 
     stow
 
