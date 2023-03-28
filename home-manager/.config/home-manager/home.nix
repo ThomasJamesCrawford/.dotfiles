@@ -194,6 +194,9 @@ in
 
       vim = "nvim";
 
+      ghpr = "gh pr create --fill";
+      ghprv = "gh pr --view";
+
       hme = "home-manager edit";
       hms = "home-manager switch && exec zsh";
       gdf = "cd ~/.dotfiles";
