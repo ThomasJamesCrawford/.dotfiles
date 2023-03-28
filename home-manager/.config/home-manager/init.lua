@@ -66,7 +66,8 @@ require('lualine').setup {
 local null_ls = require("null-ls")
 null_ls.setup({
   sources = {
-    null_ls.builtins.formatting.prettier,
+    null_ls.builtins.formatting.prettier_d_slim,
+    null_ls.builtins.formatting.eslint_d,
     null_ls.builtins.formatting.shfmt,
   }
 })
@@ -82,6 +83,7 @@ local lspconfig = require("lspconfig")
 
 lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup {}
+lspconfig.eslint.setup {}
 lspconfig.rnix.setup {}
 lspconfig.golangci_lint_ls.setup {}
 lspconfig.yamlls.setup {}
@@ -183,6 +185,16 @@ cmp.setup {
     { name = "nvim_lsp" },
     { name = "luasnip" },
 
+  },
+}
+
+require('gitsigns').setup {
+  signs = {
+    add = { text = '+' },
+    change = { text = '~' },
+    delete = { text = '_' },
+    topdelete = { text = '‾' },
+    changedelete = { text = '~' },
   },
 }
 

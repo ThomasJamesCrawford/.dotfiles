@@ -45,11 +45,9 @@ in
 
       telescope-nvim
       nvim-comment
-      gitsigns-nvim
       plenary-nvim
 
-      luasnip
-      nvim-cmp
+      gitsigns-nvim
       lualine-nvim
       fidget-nvim
 
@@ -57,6 +55,8 @@ in
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
       null-ls-nvim
+      nvim-cmp
+      luasnip
     ];
 
     extraPackages = with pkgs; [
@@ -68,9 +68,10 @@ in
       nixfmt
 
       # Typescript
-      nodePackages.prettier
-      nodePackages.eslint
+      nodePackages.prettier_d_slim
+      nodePackages.eslint_d
       nodePackages.typescript-language-server
+      # nodePackages.vscode-eslint-language-server
 
       # Lua
       lua-language-server
@@ -107,12 +108,17 @@ in
 
       # This fixes gpg signing
       export GPG_TTY=$TTY
+
+      source ~/.secrets/secrets.sh
     '';
 
     shellAliases = {
       g = "git";
 
       k = "kubectl";
+
+      atpj = "cd $HOME/ailo/atp-jellyfish-v2";
+      atpc = "cd $HOME/ailo/atp-cluster";
 
       vim = "nvim";
 
@@ -130,7 +136,7 @@ in
       theme = "simple";
 
       plugins = [
-        "aws"
+        # "aws"
         "docker"
         "git"
         "git-extras"
