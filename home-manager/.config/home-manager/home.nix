@@ -188,6 +188,10 @@ in
       atpj = "cd $HOME/ailo/atp-jellyfish-v2";
       atpc = "cd $HOME/ailo/atp-cluster";
 
+      gho = "cd $HOME";
+      ga = "cd $HOME/ailo";
+      gr = "cd $HOME/repos";
+
       vim = "nvim";
 
       hme = "home-manager edit";
