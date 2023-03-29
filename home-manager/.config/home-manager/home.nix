@@ -251,8 +251,8 @@ in
       bind k select-pane -U
       bind l select-pane -R
 
-      bind-key v split-window -h
-      bind-key s split-window -v
+      bind-key v split-window -h -c "#{pane_current_path}"
+      bind-key s split-window -v -c "#{pane_current_path}"
 
       bind Enter copy-mode
 

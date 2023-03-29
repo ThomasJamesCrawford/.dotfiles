@@ -155,7 +155,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-require("Comment").setup()
+require("nvim_comment").setup()
 
 local cmp = require("cmp")
 local luasnip = require("luasnip")
@@ -248,3 +248,6 @@ vim.cmd('highlight SpecialKey guibg=none ctermbg=none')
 vim.cmd('highlight VertSplit guibg=none ctermbg=none')
 vim.cmd('highlight SignColumn guibg=none ctermbg=none')
 vim.cmd('highlight EndOfBuffer guibg=none ctermbg=none')
+
+-- Make visual highlight more obvious
+vim.cmd('highlight Visual guibg=#458588')
