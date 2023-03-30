@@ -23,6 +23,8 @@ in
 
   fonts.fontconfig.enable = true;
 
+  nixpkgs.config.allowUnfree = true;
+
   home.packages = with pkgs; [
     htop
     jq
@@ -86,6 +88,7 @@ in
         - -c
         - .nix-profile/bin/tmux
 
+    background_opacity: 0.8
     window:
       ${if !mac then "decorations: none" else ""}
       dynamic_padding: true
@@ -141,6 +144,9 @@ in
 
       # Rust
       rust-analyzer
+
+      # PHP
+      nodePackages.intelephense
 
       # YAML
       yaml-language-server
@@ -202,6 +208,8 @@ in
       gdf = "cd ~/.dotfiles";
 
       vimrc = "nvim ~/.config/home-manager/init.lua";
+
+      sail = "[ -f sail ] && sh sail || sh vendor/bin/sail";
     };
 
     enableAutosuggestions = true;

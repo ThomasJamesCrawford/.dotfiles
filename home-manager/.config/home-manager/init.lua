@@ -88,6 +88,7 @@ local lspconfig = require("lspconfig")
 
 lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup {}
+lspconfig.intelephense.setup {}
 -- lspconfig.eslint.setup {}
 lspconfig.rnix.setup {}
 lspconfig.golangci_lint_ls.setup {}
