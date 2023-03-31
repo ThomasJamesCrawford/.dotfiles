@@ -256,9 +256,15 @@ vim.cmd('highlight EndOfBuffer guibg=none ctermbg=none')
 -- Make visual highlight more obvious
 vim.cmd('highlight Visual guibg=#458588')
 
-function GetVisualSelection()
+function GetVisualSelectionPos()
     local start_pos = vim.api.nvim_buf_get_mark(0, '<')
     local end_pos = vim.api.nvim_buf_get_mark(0, '>')
+
+    return start_pos, end_pos
+end
+
+function GetVisualSelection()
+    local start_pos, end_pos = GetVisualSelectionPos()
 
     if start_pos[1] == end_pos[1] then
         -- selection is within a single line
@@ -285,7 +291,8 @@ function CallApi(prompt)
     local data = string.format('%s', vim.fn.json_encode({
         model = "gpt-3.5-turbo",
         messages = { { role = "user", content = prompt } },
-        max_tokens = 200,
+        max_tokens = 500,
+        temperature = 0.9,
     }))
 
     local cmd = string.format(
@@ -294,12 +301,42 @@ function CallApi(prompt)
         vim.fn.shellescape(data)
     )
 
-    local success, response = pcall(vim.fn.system, cmd)
+    local response = vim.fn.system(cmd)
 
     return vim.fn.json_decode(response)
 end
 
-function InsertResponse(response)
+-- Added a loading spinner while waiting for CURL request
+function CallEditApi(prompt)
+    -- Added a loading spinner
+    vim.api.nvim_command("echo ' (Loading...)'")
+
+    local data = string.format('%s', vim.fn.json_encode({
+        temperature = 0.9,
+        model = "gpt-3.5-turbo",
+        messages = {
+            {
+                role = "user",
+                content = vim.bo.filetype ..
+                    "I want you to perform an edit on the following " ..
+                    vim.api.nvim_buf_get_option(0, "filetype") ..
+                    " code or text. DO NOT return anything except the edited code/text." ..
+                    prompt
+            } },
+    }))
+
+    local cmd = string.format(
+        [[curl -s -H "Content-Type: application/json" -H "Authorization: Bearer %s" -X POST -d %s "https://api.openai.com/v1/chat/completions"]],
+        os.getenv('OPENAI_API_KEY'),
+        vim.fn.shellescape(data)
+    )
+
+    local response = vim.fn.system(cmd)
+
+    return vim.fn.json_decode(response)
+end
+
+function ShowResponse(response)
     local output = response.choices[1].message.content
 
     local buf = vim.api.nvim_create_buf(false, true)
@@ -325,6 +362,16 @@ function InsertResponse(response)
     vim.api.nvim_set_current_win(win)
 end
 
-vim.cmd("command! -range OpenAIRequest <line1>,<line2>lua InsertResponse(CallApi(GetPrompt()))")
+function InsertResponse(response)
+    local start_pos, end_pos = GetVisualSelectionPos()
+
+    local output_lines = vim.split(response.choices[1].message.content, "\n", {})
+
+    vim.api.nvim_buf_set_lines(0, start_pos[1] - 1, end_pos[1], false, output_lines)
+end
 
 vim.keymap.set('v', 'ai', ':OpenAIRequest<CR>')
+vim.cmd("command! -range OpenAIRequest <line1>,<line2>lua ShowResponse(CallApi(GetPrompt()))")
+
+vim.keymap.set('v', 'ae', ':OpenAIEditRequest<CR>')
+vim.cmd("command! -range OpenAIEditRequest <line1>,<line2>lua InsertResponse(CallEditApi(GetPrompt()))")
