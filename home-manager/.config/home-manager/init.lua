@@ -90,7 +90,7 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 lspconfig.tsserver.setup { capabilities = capabilities }
 lspconfig.rust_analyzer.setup { capabilities = capabilities }
--- lspconfig.eslint.setup {}
+lspconfig.intelephense.setup { capabilities = capabilities }
 lspconfig.rnix.setup { capabilities = capabilities }
 lspconfig.golangci_lint_ls.setup { capabilities = capabilities }
 lspconfig.yamlls.setup {
