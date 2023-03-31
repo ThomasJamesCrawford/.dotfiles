@@ -255,3 +255,88 @@ vim.cmd('highlight EndOfBuffer guibg=none ctermbg=none')
 
 -- Make visual highlight more obvious
 vim.cmd('highlight Visual guibg=#458588')
+
+function GetVisualSelection()
+    local start_pos = vim.api.nvim_buf_get_mark(0, '<')
+    local end_pos = vim.api.nvim_buf_get_mark(0, '>')
+
+    if start_pos[1] == end_pos[1] then
+        -- selection is within a single line
+        local line = vim.api.nvim_buf_get_lines(0, start_pos[1] - 1, start_pos[1], false)[1]
+        local selection = string.sub(line, start_pos[2] + 1, end_pos[2])
+        return selection
+    else
+        -- selection spans multiple lines
+        local lines = vim.api.nvim_buf_get_lines(0, start_pos[1] - 1, end_pos[1], false)
+        lines[1] = string.sub(lines[1], start_pos[2] + 1)
+        lines[#lines] = string.sub(lines[#lines], 1, end_pos[2])
+        local selection = table.concat(lines, '\n')
+        return selection
+    end
+end
+
+function GetPrompt()
+    local prompt = vim.fn.input("Enter your prompt: ")
+    local selection = GetVisualSelection()
+    return prompt .. "\n" .. selection
+end
+
+function CallApi(prompt)
+    local data = string.format('"%s"', vim.fn.json_encode({
+        model = "gpt-3.5-turbo",
+        messages = { { role = "user", content = prompt } },
+        max_tokens = 200,
+    }))
+
+    local cmd = string.format(
+        "curl -s -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -X POST -d %s 'https://api.openai.com/v1/chat/completions'",
+        os.getenv('OPENAI_API_KEY'),
+        data
+    )
+
+    print(vim.inspect(cmd))
+
+    local success, response = pcall(vim.fn.system, cmd)
+
+    if not success then
+        print("Error running curl command:", response)
+        return nil
+    end
+
+    if not response or response == "" then
+        print("Error: empty response")
+        return nil
+    end
+
+    return vim.fn.json_decode(response)
+end
+
+function InsertResponse(response)
+    local output = response.choices[1].message.content
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    local win = vim.api.nvim_open_win(buf, true, {
+        relative = 'cursor',
+        row = 1,
+        col = 0,
+        width = math.min(80, vim.o.columns - 4),
+        height = math.min(20, vim.o.lines - 4),
+        style = 'minimal',
+        border = border,
+    })
+    vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
+
+    local lines = {}
+    for line in output:gmatch("[^\r\n]+") do
+        table.insert(lines, line)
+    end
+    -- insert the response into the buffer
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+    -- focus the window
+    vim.api.nvim_set_current_win(win)
+end
+
+vim.cmd("command! -range OpenAIRequest <line1>,<line2>lua InsertResponse(CallApi(GetPrompt()))")
+
+vim.keymap.set('v', 'ai', ':OpenAIRequest<CR>')
