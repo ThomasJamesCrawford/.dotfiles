@@ -112,6 +112,7 @@ in
       gitsigns-nvim
       lualine-nvim
       fidget-nvim
+      /* trouble-nvim */
 
       # LSP
       nvim-lspconfig
@@ -119,6 +120,8 @@ in
       null-ls-nvim
       nvim-cmp
       luasnip
+      cmp-nvim-lsp
+      cmp_luasnip
     ];
 
     extraPackages = with pkgs; [
