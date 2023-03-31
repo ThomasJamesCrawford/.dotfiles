@@ -282,31 +282,19 @@ function GetPrompt()
 end
 
 function CallApi(prompt)
-    local data = string.format('"%s"', vim.fn.json_encode({
+    local data = string.format('%s', vim.fn.json_encode({
         model = "gpt-3.5-turbo",
         messages = { { role = "user", content = prompt } },
         max_tokens = 200,
     }))
 
     local cmd = string.format(
-        "curl -s -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -X POST -d %s 'https://api.openai.com/v1/chat/completions'",
+        [[curl -s -H "Content-Type: application/json" -H "Authorization: Bearer %s" -X POST -d %s "https://api.openai.com/v1/chat/completions"]],
         os.getenv('OPENAI_API_KEY'),
-        data
+        vim.fn.shellescape(data)
     )
 
-    print(vim.inspect(cmd))
-
     local success, response = pcall(vim.fn.system, cmd)
-
-    if not success then
-        print("Error running curl command:", response)
-        return nil
-    end
-
-    if not response or response == "" then
-        print("Error: empty response")
-        return nil
-    end
 
     return vim.fn.json_decode(response)
 end
