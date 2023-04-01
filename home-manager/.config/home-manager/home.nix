@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   mac = pkgs.system == "x86_64-darwin";
@@ -15,6 +15,15 @@ let
 
   font = with pkgs; import ./font.nix {
     inherit stdenv fetchzip;
+  };
+
+  fromGitHub = ref: repo: pkgs.vimUtils.buildVimPluginFrom2Nix {
+    pname = "${lib.strings.sanitizeDerivationName repo}";
+    version = ref;
+    src = builtins.fetchGit {
+      url = "https://github.com/${repo}.git";
+      ref = ref;
+    };
   };
 in
 {
@@ -115,7 +124,6 @@ in
       gitsigns-nvim
       lualine-nvim
       fidget-nvim
-      /* trouble-nvim */
 
       # LSP
       nvim-lspconfig
@@ -125,6 +133,9 @@ in
       luasnip
       cmp-nvim-lsp
       cmp_luasnip
+
+      # Mine
+      (fromGitHub "refs/tags/v0.0.3" "ThomasJamesCrawford/openai.nvim")
     ];
 
     extraPackages = with pkgs; [
