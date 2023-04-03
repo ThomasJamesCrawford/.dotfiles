@@ -97,7 +97,7 @@ in
         - -c
         - .nix-profile/bin/tmux
 
-    background_opacity: 0.8
+    ${if !mac then "background_opacity: 0.8" else ""}
     window:
       ${if !mac then "decorations: none" else ""}
       dynamic_padding: true
