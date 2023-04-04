@@ -34,7 +34,7 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     htop
     jq
     fd
@@ -43,7 +43,10 @@ in
     stow
 
     font
-  ];
+
+  ]) ++ (if mac then [
+    (builtins.getFlake "git+ssh://git@github.com/ailohq/ailo-tools.git").defaultPackage.${pkgs.system}
+  ] else [ ]);
 
   home.file.".config/nvim/settings.lua".source = ./init.lua;
 
