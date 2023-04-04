@@ -264,8 +264,9 @@ in
     ];
 
     extraConfig = ''
-      # TERM override
-      set terminal-overrides "xterm*:RGB"
+      # 0 is far away
+      set -g base-index 1
+      setw -g pane-base-index 1
 
       # Enable mouse
       set -g mouse on
