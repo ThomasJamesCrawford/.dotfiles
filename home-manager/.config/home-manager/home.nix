@@ -37,13 +37,19 @@ in
   home.packages = (with pkgs; [
     htop
     jq
+
     fd
+    ripgrep
+
+    awscli2
+    kubectl
+    k9s
+
     gh
 
     stow
 
     font
-
   ]) ++ (if mac then [
     (builtins.getFlake "git+ssh://git@github.com/ailohq/ailo-tools.git").defaultPackage.${pkgs.system}
   ] else [ ]);
@@ -112,6 +118,8 @@ in
   '';
 
   home.stateVersion = "22.11";
+
+  programs.direnv.enable = true;
 
   programs.neovim = {
     enable = true;
