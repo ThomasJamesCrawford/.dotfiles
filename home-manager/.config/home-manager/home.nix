@@ -44,6 +44,8 @@ in
     awscli2
     kubectl
     k9s
+    k6
+    aws-vault
 
     gh
 
@@ -179,8 +181,6 @@ in
       # Go
       go
       gopls
-      golangci-lint
-      golangci-lint-langserver
 
       # Shell
       shfmt

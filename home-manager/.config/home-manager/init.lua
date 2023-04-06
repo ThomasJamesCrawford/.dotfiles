@@ -92,7 +92,7 @@ lspconfig.tsserver.setup { capabilities = capabilities }
 lspconfig.rust_analyzer.setup { capabilities = capabilities }
 lspconfig.intelephense.setup { capabilities = capabilities }
 lspconfig.rnix.setup { capabilities = capabilities }
-lspconfig.golangci_lint_ls.setup { capabilities = capabilities }
+lspconfig.gopls.setup { capabilities = capabilities }
 lspconfig.yamlls.setup {
     capabilities = capabilities,
     settings = {
