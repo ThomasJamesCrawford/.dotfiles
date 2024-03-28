@@ -68,11 +68,6 @@ require('lualine').setup {
 local null_ls = require("null-ls")
 null_ls.setup({
     sources = {
-        -- null_ls.builtins.formatting.prettier_d_slim.with({
-        --     disabled_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" } -- eslint_d does these
-        -- }),
-        -- null_ls.builtins.formatting.eslint,
-        -- null_ls.builtins.diagnostics.eslint,
         null_ls.builtins.formatting.shfmt,
         null_ls.builtins.formatting.biome,
     }
@@ -178,7 +173,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 require("nvim_comment").setup()
 
 local cmp = require("cmp")
-local luasnip = require("luasnip")
 
 require("copilot").setup({
     suggestion = {

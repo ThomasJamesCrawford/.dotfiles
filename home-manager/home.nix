@@ -1,38 +1,11 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
-let
-  mac = pkgs.system == "x86_64-darwin";
-
-  username =
-    if mac
-    then "thomascrawford"
-    else "thomas";
-
-  homeDirectory =
-    if mac
-    then "/Users/${username}"
-    else "/home/${username}";
-
-  font = with pkgs; import ./font.nix {
-    inherit stdenv fetchzip;
-  };
-
-  fromGitHub = ref: repo: pkgs.vimUtils.buildVimPlugin {
-    pname = "${lib.strings.sanitizeDerivationName repo}";
-    version = ref;
-    src = builtins.fetchGit {
-      url = "https://github.com/${repo}.git";
-      ref = ref;
-    };
-  };
-in
 {
-  home.username = username;
-  home.homeDirectory = homeDirectory;
+  home.username = "thomas";
+  home.homeDirectory = "/home/thomas";
+  home.stateVersion = "23.05";
 
   fonts.fontconfig.enable = true;
-
-  nixpkgs.config.allowUnfree = true;
 
   home.packages = (with pkgs; [
     htop
@@ -50,82 +23,12 @@ in
     awscli2
     kubectl
     k9s
-    k6
     aws-vault
 
     gh
-
-    stow
-
-    font
-  ]) ++ (if mac then [
-    (builtins.getFlake "git+ssh://git@github.com/ailohq/ailo-tools.git")
-  ] else [ ]);
+  ]);
 
   home.file.".config/nvim/settings.lua".source = ./init.lua;
-
-  # Need to set this outside home-manager
-  # sudo chsh -s $(which zsh) $(whoami)
-  #home.file.".bashrc".text = ''
-  #  # export SHELL=${pkgs.zsh}/bin/zsh
-  #'';
-
-  home.file.".config/alacritty/alacritty.yml".text = ''
-    # Colors (Gruvbox Material Dark Medium)
-    colors:
-      bright:
-        black: "0x928374"
-        blue: "0x7daea3"
-        cyan: "0x89b482"
-        green: "0xa9b665"
-        magenta: "0xd3869b"
-        red: "0xea6962"
-        white: "0xdfbf8e"
-        yellow: "0xe3a84e"
-
-      normal:
-        black: "0x665c54"
-        blue: "0x7daea3"
-        cyan: "0x89b482"
-        green: "0xa9b665"
-        magenta: "0xd3869b"
-        red: "0xea6962"
-        white: "0xdfbf8e"
-        yellow: "0xe78a4e"
-
-      primary:
-        background: "0x282828"
-        foreground: "0xdfbf8e"
-
-    env:
-      TERM: xterm-256color
-
-    font:
-      normal:
-        family: ${if mac then "MesloLGS NF" else "Hack"}
-        style: Regular
-
-      size: ${if mac then "16" else "13"}
-
-    shell:
-      program: ${pkgs.zsh}/bin/zsh
-      args:
-        - -l
-        - -c
-        - ${pkgs.tmux}/bin/tmux
-
-    ${if !mac then "background_opacity: 0.8" else ""}
-    window:
-      ${if !mac then "decorations: none" else ""}
-      dynamic_padding: true
-      opacity: 0.8
-      # padding:
-      #   x: 12
-      #   y: 12
-      ${if !mac then "startup_mode: Maximized" else ""}
-  '';
-
-  home.stateVersion = "24.05";
 
   programs.direnv.enable = true;
 
@@ -144,20 +47,16 @@ in
       lualine-nvim
       fidget-nvim
 
-      # LSP
+      ## LSP
       nvim-lspconfig
       nvim-treesitter.withAllGrammars
       none-ls-nvim
       nvim-cmp
-      luasnip
+      #luasnip
       cmp-nvim-lsp
       cmp_luasnip
 
-      # Mine
-      (fromGitHub "refs/tags/v0.0.3" "ThomasJamesCrawford/openai.nvim")
-
       copilot-lua
-
     ];
 
     extraPackages = with pkgs; [
@@ -169,10 +68,8 @@ in
       nil
 
       # Typescript
-      nodePackages.prettier_d_slim
-      nodePackages.prettier
-      nodePackages.eslint_d
       nodePackages.typescript-language-server
+      biome
 
       # Lua
       lua-language-server
@@ -213,10 +110,6 @@ in
       export TERM=xterm-256color
 
       export LC_ALL="en_US.UTF-8"
-
-      path+=('/Users/thomascrawford/.docker/bin')
-
-      export PATH
     '';
 
     shellAliases = {
@@ -240,12 +133,10 @@ in
       ghprv = "gh pr --view";
 
       hme = "home-manager edit";
-      hms = "home-manager switch && exec zsh";
+      hms = "nix run nixpkgs#home-manager -- switch --flake \"$HOME/.dotfiles#$USER\" && exec zsh";
       gdf = "cd ~/.dotfiles";
 
       vimrc = "nvim ~/.config/home-manager/init.lua";
-
-      sail = "[ -f sail ] && sh sail || sh vendor/bin/sail";
     };
 
     autosuggestion.enable = true;
@@ -273,16 +164,6 @@ in
 
     keyMode = "vi";
     terminal = "xterm-256color";
-
-    #plugins = with pkgs.tmuxPlugins; [
-    #  yank
-    #  {
-    #    plugin = power-theme;
-    #    extraConfig = ''
-    #      set -g @tmux_power_theme '#7daea3'
-    #    '';
-    #  }
-    #];
 
     extraConfig = ''
       # 0 is far away
@@ -358,13 +239,6 @@ in
       # vim: set ft=tmux tw=0 nowrap:
     '';
   };
-
-  # programs.git = {
-  #   enable = true;
-  #
-  #   userName = "Thomas Crawford";
-  #   userEmail = "ThomasJamesCrawford96@gmail.com";
-  # };
 
   programs.home-manager.enable = true;
 }

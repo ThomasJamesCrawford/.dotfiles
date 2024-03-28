@@ -3,15 +3,8 @@
 set -eou pipefail
 
 brew install \
-    alacritty \
-    stow
-
-stow home-manager
+	alacritty
 
 nix doctor || sh <(curl -L https://nixos.org/nix/install)
 
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-
-nix-channel --update
-
-nix-shell '<home-manager>' -A install
+nix run nixpkgs#home-manager -- switch --flake "$HOME/.dotfiles#$USER"
