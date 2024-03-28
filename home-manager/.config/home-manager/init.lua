@@ -68,31 +68,47 @@ require('lualine').setup {
 local null_ls = require("null-ls")
 null_ls.setup({
     sources = {
-        null_ls.builtins.formatting.prettier_d_slim.with({
-            disabled_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" } -- eslint_d does these
-        }),
-        null_ls.builtins.formatting.eslint_d,
-        null_ls.builtins.diagnostics.eslint_d,
+        -- null_ls.builtins.formatting.prettier_d_slim.with({
+        --     disabled_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" } -- eslint_d does these
+        -- }),
+        -- null_ls.builtins.formatting.eslint,
+        -- null_ls.builtins.diagnostics.eslint,
         null_ls.builtins.formatting.shfmt,
+        null_ls.builtins.formatting.biome,
     }
 })
 
 require('fidget').setup {
-    window = {
-        blend = 0,
+    notification = {
+        window = {
+            winblend = 0,
+        }
     }
 }
 
--- Setup language servers.
 local lspconfig = require("lspconfig")
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+lspconfig.biome.setup { capabilities = capabilities }
+lspconfig.metals.setup { capabilities = capabilities }
 lspconfig.tsserver.setup { capabilities = capabilities }
 lspconfig.rust_analyzer.setup { capabilities = capabilities }
 lspconfig.intelephense.setup { capabilities = capabilities }
-lspconfig.rnix.setup { capabilities = capabilities }
+
+lspconfig.nil_ls.setup {
+    capabilities = capabilities,
+    settings = {
+        ['nil'] = {
+            formatting = {
+                command = { "nixpkgs-fmt" },
+            },
+        },
+    }
+}
+
 lspconfig.gopls.setup { capabilities = capabilities }
+
 lspconfig.yamlls.setup {
     capabilities = capabilities,
     settings = {
@@ -164,48 +180,53 @@ require("nvim_comment").setup()
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 
-cmp.setup {
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert {
-        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
+require("copilot").setup({
+    suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+            accept = "<C-j>",
         },
-        ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
     },
-    sources = {
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
+    filetypes = {
+        yaml = true,
+        markdown = true,
+        help = false,
+        gitcommit = false,
+        gitrebase = false,
+        hgcommit = false,
+        svn = false,
+        cvs = false,
+        ["."] = false,
+        panel = { enabled = false },
+    }
+})
+
+cmp.setup({
+    snippet = {
+        -- REQUIRED - you must specify a snippet engine
+        expand = function(args)
+            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        end,
     },
     window = {
         -- completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
+        -- documentation = cmp.config.window.bordered(),
     },
-}
+    mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' }, -- For luasnip users.
+    }, {
+        { name = 'buffer' },
+    })
+})
 
 require('gitsigns').setup {
     signs = {
@@ -255,8 +276,6 @@ vim.cmd('highlight EndOfBuffer guibg=none ctermbg=none')
 
 -- Make visual highlight more obvious
 vim.cmd('highlight Visual guibg=#458588')
-
-require('openai').setup {}
 
 vim.keymap.set('v', 'ai', ':OpenAICompletion<CR>')
 vim.keymap.set('v', 'ae', ':OpenAICompletionEdit<CR>')
