@@ -1,5 +1,4 @@
 { pkgs, ... }:
-
 {
   imports = [
     ./alacritty.nix
@@ -33,6 +32,8 @@
     aws-vault
 
     gh
+
+    pure-prompt
   ]);
 
   programs.direnv.enable = true;
@@ -51,6 +52,9 @@
       export TERM=xterm-256color
 
       export LC_ALL="en_US.UTF-8"
+
+      autoload -U promptinit; promptinit
+      prompt pure
     '';
 
     shellAliases = {
@@ -84,13 +88,22 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
 
+    plugins = with pkgs; [{
+      name = "pure";
+      src = pure-prompt;
+    }];
+
     oh-my-zsh = {
       enable = true;
-      theme = "simple";
+      theme = "";
 
       plugins = [
         "fzf"
         "kubectl"
+        "git"
+        "ripgrep"
+        "golang"
+        "helm"
       ];
     };
   };
