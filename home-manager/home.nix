@@ -24,6 +24,7 @@
 
     fd
     ripgrep
+    fzf
     go
 
     awscli2
@@ -88,6 +89,8 @@
       theme = "simple";
 
       plugins = [
+        "fzf"
+        "kubectl"
       ];
     };
   };
