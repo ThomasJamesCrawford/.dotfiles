@@ -60,6 +60,12 @@
       shfmt
       shellcheck
       nodePackages.bash-language-server
+
+      # html
+      vscode-langservers-extracted
+
+      # htmx
+      htmx-lsp
     ];
 
     extraConfig = ''

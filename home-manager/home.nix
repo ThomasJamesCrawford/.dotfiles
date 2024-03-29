@@ -81,7 +81,7 @@
       hms = "nix run nixpkgs#home-manager -- switch --flake \"$HOME/.dotfiles#$USER\" && exec zsh";
       gdf = "cd ~/.dotfiles";
 
-      vimrc = "nvim ~/$HOME/.dotfiles/home-manager/init.lua";
+      vimrc = "nvim ~/.dotfiles/home-manager/init.lua";
     };
 
     autosuggestion.enable = true;

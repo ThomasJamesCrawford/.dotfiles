@@ -86,6 +86,8 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 lspconfig.biome.setup { capabilities = capabilities }
+lspconfig.htmx.setup { capabilities = capabilities }
+lspconfig.html.setup { capabilities = capabilities }
 lspconfig.metals.setup { capabilities = capabilities }
 lspconfig.tsserver.setup { capabilities = capabilities }
 lspconfig.rust_analyzer.setup { capabilities = capabilities }
