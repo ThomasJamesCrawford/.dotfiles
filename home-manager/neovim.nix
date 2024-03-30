@@ -53,8 +53,10 @@
       yaml-language-server
 
       # Go
-      go
       gopls
+
+      # SQL
+      sqls
 
       # Shell
       shfmt

@@ -26,6 +26,18 @@
         '';
       };
 
+      sqls-nvim = pkgs.vimUtils.buildVimPlugin {
+        pname = "sqls.nvim";
+        version = "v0.0.1";
+        src = pkgs.fetchFromGitHub {
+          owner = "nanotee";
+          repo = "sqls.nvim";
+          rev = "4b1274b5b44c48ce784aac23747192f5d9d26207";
+          sha256 = "sha256-jKFut6NZAf/eIeIkY7/2EsjsIhvZQKCKAJzeQ6XSr0s=";
+        };
+        meta.homepage = "https://github.com/nanotee/sqls.nvim";
+      };
+
     in
     {
       homeConfigurations = {
@@ -36,7 +48,12 @@
               home.packages = [ font ];
             }
 
+            {
+              programs.neovim.plugins = [ sqls-nvim ];
+            }
+
             ./home-manager/home.nix
+
           ];
         };
       };

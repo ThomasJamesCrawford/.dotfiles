@@ -85,6 +85,22 @@ local lspconfig = require("lspconfig")
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+lspconfig.sqls.setup {
+    on_attach = function(client, bufnr)
+        require('sqls').on_attach(client, bufnr)
+    end,
+    settings = {
+        sqls = {
+            connections = {
+                {
+                    driver = 'postgresql',
+                    dataSourceName = 'host=127.0.0.1 port=5432 user=dev dbname=dev sslmode=disable',
+                },
+            },
+        },
+    },
+}
+
 lspconfig.biome.setup { capabilities = capabilities }
 lspconfig.htmx.setup { capabilities = capabilities }
 lspconfig.html.setup { capabilities = capabilities }
